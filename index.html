@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemetaan Struktur Data Graph</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="flex">
+        <div class="block bg-[#f0f2f6] min-w-[20vw] min-h-[100vh]">
+            <div class="mt-20 px-4">
+                <form>
+                    <p class="text-[#8e8b97] mb-2">Ask Here ...</p>
+                    <input type="text" placeholder="halo" class="px-3 py-2 rounded-sm w-full outline-none">
+                    <p class="text-[#8e8b97] mb-2 mt-4">VM Available</p>
+                    <select class="px-3 py-2 rounded-sm w-full outline-none">
+                        <option value="vm1">vm1</option>
+                    </select>
+                    <p class="text-[#8e8b97] mb-2 mt-4">Execute Agent</p>
+                    <select class="px-3 py-2 rounded-sm w-full outline-none">
+                        <option value="vm1">None</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+        <div class="block w-full min-h-[100vh] p-4">
+            <div class="flex justify-end mb-6">
+                <svg class="fill-[#8e8b97]" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg>
+                <p class="text-[#8e8b97] mr-7">CONNECTING</p>
+                <svg class="fill-[#8e8b97]" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
+            </div>
+            <div id="network" class="min-h-[100vh]"></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // Data awal untuk grafik
+        var nodes = [
+          { id: 1, label: 'Halo', color: 'gray' , data: ""},
+        ];
+      
+        var edges = [];
+      
+        // Konfigurasi grafik
+        var container = document.getElementById('network');
+        var data = {
+          nodes: nodes,
+          edges: edges
+        };
+        var options = {};
+      
+        // Membuat grafik menggunakan vis.js
+        var network = new vis.Network(container, data, options);
+        
+        network.setSize("100%", `${7/10 * screen.height}px`)
+
+        // Menambahkan event listener untuk klik pada node
+        network.on('doubleClick', function(properties) {
+          var nodeId = properties.nodes[0];
+          if (nodeId !== undefined) {
+            var clickedNode = nodes.find(node => node.id === nodeId);
+            alert('Anda mengklik ' + clickedNode.label);
+          }
+        });
+
+        network.on("click", function(properties) {
+          if(properties.nodes[0] !== undefined){
+            addNode(properties.nodes[0])
+          }
+        })
+      
+        // Fungsi untuk menambahkan node baru
+        function addNode(id) {
+          var newNodeId = nodes.length + 1;
+          var newNodeLabel = 'Node ' + newNodeId;
+          var newNodeColor = getRandomColor(); // Membuat warna acak untuk node baru
+      
+          var newNode = { id: newNodeId, label: newNodeLabel, color: newNodeColor };
+          nodes.push(newNode);
+
+          var edge;
+      
+          // Menambahkan edge dari node baru ke setiap node yang sudah ada sebelumnya
+          edge = { from: newNodeId, to: id };
+          edges.push(edge);
+      
+          // Memperbarui data grafik dengan node dan edge baru
+          network.body.data.nodes.add(newNode);
+          network.body.data.edges.add(edge);
+          console.log(edges)
+        }
+      
+        // Fungsi untuk mendapatkan warna acak
+        function getRandomColor() {
+          var letters = '0123456789ABCDEF';
+          var color = '#';
+          for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+          }
+          return color;
+        }
+      </script>
+</body>
+</html>
